@@ -18,7 +18,7 @@ export default function Home() {
     }
   );
 
-  console.log(data);
+  if (isLoading) return "Loading..";
 
   return (
     <>
@@ -35,7 +35,7 @@ export default function Home() {
           </li>
         </ul>
       </div>
-      <UserTable />
+      <UserTable blogs={data} />
     </>
   );
 }
