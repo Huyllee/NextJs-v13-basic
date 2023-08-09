@@ -2,6 +2,8 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Container from "react-bootstrap/Container";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
@@ -24,6 +26,18 @@ export default function RootLayout({
         <NavBar />
         <Container>{children}</Container>
         <Footer />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </body>
     </html>
   );

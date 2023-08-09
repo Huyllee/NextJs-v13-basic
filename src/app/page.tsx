@@ -35,7 +35,7 @@ export default function Home() {
           </li>
         </ul>
       </div>
-      <UserTable blogs={data} />
+      <UserTable blogs={data?.sort((a: any, b: any) => b.id - a.id)} />
     </>
   );
 }
