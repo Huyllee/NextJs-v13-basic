@@ -10,7 +10,15 @@ interface IProps {
 
 const UserTable = (props: IProps) => {
   const { blogs } = props;
+  const [blogData, setBlogData] = useState<IBlog | null>(null);
   const [showModalCreate, setShowModalCreate] = useState<boolean>(false);
+
+  const hangdeEditBtn = (blog: any) => {
+    if (blog) {
+      setShowModalCreate(true);
+      setBlogData(blog);
+    }
+  };
 
   return (
     <>
@@ -40,7 +48,11 @@ const UserTable = (props: IProps) => {
               <td>{blog.author}</td>
               <td>
                 <Button variant="primary">View</Button>
-                <Button variant="warning" className="mx-3">
+                <Button
+                  variant="warning"
+                  className="mx-3"
+                  onClick={() => hangdeEditBtn(blog)}
+                >
                   Edit
                 </Button>
                 <Button variant="danger">Delete</Button>
@@ -52,6 +64,8 @@ const UserTable = (props: IProps) => {
       <CreateModal
         showModalCreate={showModalCreate}
         setShowModalCreate={setShowModalCreate}
+        setBlogData={setBlogData}
+        blogData={blogData}
       />
     </>
   );

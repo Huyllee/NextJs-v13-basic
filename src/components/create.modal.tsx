@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -9,13 +9,27 @@ import { mutate } from "swr";
 interface IProps {
   showModalCreate: boolean;
   setShowModalCreate: (v: boolean) => void;
+  setBlogData: (v: IBlog | null) => void;
+  blogData: IBlog | null;
 }
 
 const CreateModal = (props: IProps) => {
-  const { showModalCreate, setShowModalCreate } = props;
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [content, setContent] = useState("");
+  const { showModalCreate, setShowModalCreate, setBlogData, blogData } = props;
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [blogId, setBlogId] = useState<number>(0);
+  const [title, setTitle] = useState<string>("");
+  const [author, setAuthor] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+
+  useEffect(() => {
+    if (blogData && blogData.id) {
+      setIsEdit(true);
+      setBlogId(blogData.id);
+      setTitle(blogData.title);
+      setAuthor(blogData.author);
+      setContent(blogData.content);
+    }
+  }, [blogData]);
 
   const handleSubmit = () => {
     if (!title) {
@@ -30,29 +44,53 @@ const CreateModal = (props: IProps) => {
       toast.error("Not empty content");
       return;
     }
-    fetch("http://localhost:8000/blogs", {
-      method: "POST",
-      headers: {
-        Accept: "application/json, text/plain, */*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, author, content }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res) {
-          toast.success("Create new blog success");
-          handleCloseModal();
-          mutate("http://localhost:8000/blogs");
-        }
-      });
+
+    if (!isEdit) {
+      fetch("http://localhost:8000/blogs", {
+        method: "POST",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, author, content }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res) {
+            toast.success("Create new blog success");
+            handleCloseModal();
+            mutate("http://localhost:8000/blogs");
+          }
+        });
+    }
+
+    if (blogData && blogData.id) {
+      fetch(`http://localhost:8000/blogs/${blogId}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, author, content }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res) {
+            toast.success("Update a blog success");
+            handleCloseModal();
+            mutate("http://localhost:8000/blogs");
+          }
+        });
+    }
   };
 
   const handleCloseModal = () => {
     setTitle("");
     setAuthor("");
     setContent("");
+    setBlogData(null);
     setShowModalCreate(false);
+    setIsEdit(false);
   };
 
   return (
@@ -65,7 +103,9 @@ const CreateModal = (props: IProps) => {
         size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Add New A Blog</Modal.Title>
+          <Modal.Title>
+            {isEdit ? "Update A Blog" : "Add New A Blog"}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -103,7 +143,7 @@ const CreateModal = (props: IProps) => {
             Close
           </Button>
           <Button variant="primary" onClick={() => handleSubmit()}>
-            Save
+            {isEdit ? "Update" : "Save"}
           </Button>
         </Modal.Footer>
       </Modal>
