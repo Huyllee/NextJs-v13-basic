@@ -1,9 +1,12 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import CreateModal from "../create.modal";
 import { useState } from "react";
 import Link from "next/link";
+import { mutate } from "swr";
+import { toast } from "react-toastify";
 
 interface IProps {
   blogs: IBlog[];
@@ -14,10 +17,31 @@ const UserTable = (props: IProps) => {
   const [blogData, setBlogData] = useState<IBlog | null>(null);
   const [showModalCreate, setShowModalCreate] = useState<boolean>(false);
 
-  const hangdeEditBtn = (blog: any) => {
+  const handleEditBtn = (blog: any) => {
     if (blog) {
       setShowModalCreate(true);
       setBlogData(blog);
+    }
+  };
+
+  const handleDeleteBtn = (blogId: number) => {
+    if (blogId) {
+      if (confirm(`Do you want to delete this blog ${blogId}`)) {
+        fetch(`http://localhost:8000/blogs/${blogId}`, {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res) {
+              toast.success("Deleted a blog success");
+              mutate("http://localhost:8000/blogs");
+            }
+          });
+      }
     }
   };
 
@@ -54,11 +78,16 @@ const UserTable = (props: IProps) => {
                 <Button
                   variant="warning"
                   className="mx-3"
-                  onClick={() => hangdeEditBtn(blog)}
+                  onClick={() => handleEditBtn(blog)}
                 >
                   Edit
                 </Button>
-                <Button variant="danger">Delete</Button>
+                <Button
+                  variant="danger"
+                  onClick={() => handleDeleteBtn(blog.id)}
+                >
+                  Delete
+                </Button>
               </td>
             </tr>
           ))}
