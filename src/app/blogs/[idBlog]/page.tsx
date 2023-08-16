@@ -4,6 +4,21 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import useSWR, { Fetcher } from "swr";
 
+export async function generateMetadata(props: any) {
+  // read route params
+  const { params } = props;
+
+  // fetch data
+  const data = await fetch(`http://localhost:8000/blogs/${params.idBlog}`).then(
+    (res) => res.json()
+  );
+
+  // return a dynamic title
+  return {
+    title: data.title,
+  };
+}
+
 const DetailBlog = (props: any) => {
   const { params } = props;
 

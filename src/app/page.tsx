@@ -1,6 +1,10 @@
-"use client"; //useEffect chay o client
 import styles from "@/styles/app.module.css";
 import Link from "next/link";
+
+export const metadata = {
+  title: "Home",
+  description: "home page",
+};
 
 export default function Home() {
   return (
