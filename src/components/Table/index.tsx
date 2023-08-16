@@ -3,6 +3,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import CreateModal from "../create.modal";
 import { useState } from "react";
+import Link from "next/link";
 
 interface IProps {
   blogs: IBlog[];
@@ -47,7 +48,9 @@ const UserTable = (props: IProps) => {
               <td>{blog.title}</td>
               <td>{blog.author}</td>
               <td>
-                <Button variant="primary">View</Button>
+                <Link className="btn btn-primary" href={`/blogs/${blog.id}`}>
+                  View
+                </Link>
                 <Button
                   variant="warning"
                   className="mx-3"

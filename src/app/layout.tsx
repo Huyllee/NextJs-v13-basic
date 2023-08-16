@@ -23,9 +23,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NavBar />
-        <Container>{children}</Container>
-        <Footer />
+        <div
+          style={{ display: "flex", flexDirection: "column", height: "100vh" }}
+        >
+          <div style={{ flexShrink: 0 }}>
+            <NavBar />
+          </div>
+          <div style={{ flex: 1 }}>
+            <Container>{children}</Container>
+          </div>
+          <div style={{ flexShrink: 0 }}>
+            <Footer />
+          </div>
+        </div>
+
         <ToastContainer
           position="top-right"
           autoClose={3000}
