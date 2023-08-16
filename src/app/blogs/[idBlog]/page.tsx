@@ -2,25 +2,37 @@
 import Link from "next/link";
 import React from "react";
 import Card from "react-bootstrap/Card";
+import useSWR, { Fetcher } from "swr";
 
 const DetailBlog = (props: any) => {
   const { params } = props;
 
+  const fetcher: Fetcher<IBlog, string> = (url: string) =>
+    fetch(url).then((res) => res.json());
+
+  const { data, error, isLoading } = useSWR(
+    `http://localhost:8000/blogs/${params.idBlog}`,
+    fetcher,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  if (isLoading) return "Loading..";
+
   return (
     <>
-      <Link className="btn btn-primary my-3" href="/">
+      <Link className="btn btn-primary my-3" href="/blogs">
         Go Back
       </Link>
       <Card className="container px-0" border="info" style={{ width: "30rem" }}>
-        <Card.Header>Header</Card.Header>
         <Card.Body>
-          <Card.Title>Info Card Title</Card.Title>
-          <Card.Text>
-            Some quick example text to build on the card title and make up the
-            bulk of the cards content.
-          </Card.Text>
+          <Card.Title>{data?.title}</Card.Title>
+          <Card.Text>{data?.content}</Card.Text>
         </Card.Body>
-        <Card.Footer>dsfsfd</Card.Footer>
+        <Card.Footer>Author: {data?.author}</Card.Footer>
       </Card>
     </>
   );
